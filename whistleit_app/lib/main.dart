@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:whistleit_app/constants/colors.dart';
+import 'package:whistleit_app/screens/addreport/addreport.dart';
 import 'package:whistleit_app/screens/initial/splashscreen.dart';
 
 import 'firebase_options.dart';
