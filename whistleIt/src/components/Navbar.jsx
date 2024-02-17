@@ -18,11 +18,11 @@ const Navbar = () => {
   const [open, setOpen] = useState(true);
   const Menus = [
     { title: "Dashboard", src: "Chart_fill", link: "/homepage" },
-    { title: "Total Cases", src: "Chat", link: "/inbox" },
-    { title: "Assigned Cases", src: "Chart", link: "/analytics" },
-    { title: "Pending Cases", src: "User", gap: true, link: "/accounts" },
-    { title: "OnGoing Cases", src: "Calendar", link: "/schedule" },
-    { title: "Completed Cases", src: "Search", link: "/search" },
+    { title: "Total Cases", src: "Chat", link: "/totalCases" },
+    { title: "Assigned Cases", src: "Chart", link: "/assigned" },
+    { title: "Pending Cases", src: "User", gap: true, link: "/pending" },
+    { title: "OnGoing Cases", src: "Calendar", link: "/onGoing" },
+    { title: "Completed Cases", src: "Search", link: "/completed" },
     // { title: "Files", src: "Folder", gap: true, link: "/files" },
     // { title: "Setting", src: "Setting", link: "/login" },
   ];
@@ -100,7 +100,7 @@ const Navbar = () => {
               !open && "scale-0"
             }`}
           >
-            Designer
+            WhistleIt
           </h1>
         </div>
         <ul className="pt-6">
