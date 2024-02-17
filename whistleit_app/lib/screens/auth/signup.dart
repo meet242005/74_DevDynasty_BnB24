@@ -4,22 +4,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
-import 'package:whistleit_app/screens/auth/signup.dart';
 
 import '../../constants/colors.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({Key? key}) : super(key: key);
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
 
   @override
-  _SigninState createState() => _SigninState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SigninState extends State<SignIn> {
+class _SignUpState extends State<SignUp> {
   @override
+  TextEditingController _usernameController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _password2Controller = new TextEditingController();
   var isPasswordVisible = false;
+  var isPassword2Visible = false;
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +42,7 @@ class _SigninState extends State<SignIn> {
                       Row(
                         children: [
                           Text(
-                            'Welcome back,',
+                            'Hello,',
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 30,
@@ -50,7 +52,7 @@ class _SigninState extends State<SignIn> {
                       ),
                       Row(
                         children: [
-                          Text('Login to continue!',
+                          Text('Welcome to WhistleIt!',
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 30,
@@ -77,7 +79,7 @@ class _SigninState extends State<SignIn> {
                   Column(
                     children: [
                       Container(
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                         width: double.infinity,
                         height: 60,
                         decoration: BoxDecoration(
@@ -85,7 +87,35 @@ class _SigninState extends State<SignIn> {
                             border: Border.all(
                               color: Colors.grey.shade200,
                             ),
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: TextFormField(
+                            controller: _usernameController,
+                            cursorColor: Colors.black,
+                            decoration: const InputDecoration(
+                              hintText: 'Username',
+                              hintStyle: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: secondaryColor),
+                              prefixIcon: Icon(
+                                Icons.person_outline,
+                                color: secondaryColor,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                        width: double.infinity,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: thirdColor,
+                            border: Border.all(
+                              color: Colors.grey.shade200,
+                            ),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Center(
                           child: TextFormField(
                             controller: _emailController,
@@ -113,7 +143,7 @@ class _SigninState extends State<SignIn> {
                             border: Border.all(
                               color: Colors.grey.shade200,
                             ),
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Center(
                           child: TextFormField(
                             obscureText: isPasswordVisible ? false : true,
@@ -121,10 +151,10 @@ class _SigninState extends State<SignIn> {
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
                               hintText: 'Password',
-                              hintStyle: const TextStyle(
+                              hintStyle: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: secondaryColor),
-                              prefixIcon: const Icon(
+                              prefixIcon: Icon(
                                 Icons.password,
                                 color: secondaryColor,
                               ),
@@ -146,31 +176,47 @@ class _SigninState extends State<SignIn> {
                           ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              try {
-                                await FirebaseAuth.instance
-                                    .sendPasswordResetEmail(
-                                        email: _emailController.text);
-                                Get.snackbar("Password Reset Sent!",
-                                    "Please Check Your Email");
-                              } on FirebaseAuthException catch (e) {
-                                Get.snackbar("Error Sending Password Reset!",
-                                    e.toString());
-                              }
-                            },
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                        width: double.infinity,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: thirdColor,
+                            border: Border.all(
+                              color: Colors.grey.shade200,
+                            ),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: TextFormField(
+                            obscureText: isPassword2Visible ? false : true,
+                            controller: _password2Controller,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              hintText: 'Confirm Password',
+                              hintStyle: TextStyle(
+                                  fontWeight: FontWeight.w300,
                                   color: secondaryColor),
+                              prefixIcon: Icon(
+                                Icons.password,
+                                color: secondaryColor,
+                              ),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    isPassword2Visible = !isPassword2Visible;
+                                  });
+                                },
+                                child: Icon(
+                                  isPassword2Visible
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: secondaryColor,
+                                ),
+                              ),
+                              border: InputBorder.none,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                       const SizedBox(
                         height: 30,
@@ -178,12 +224,33 @@ class _SigninState extends State<SignIn> {
                       InkWell(
                         onTap: () async {
                           try {
-                            await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: _emailController.text,
-                                    password: _passwordController.text);
+                            _passwordController.text ==
+                                    _password2Controller.text
+                                ? await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                        email: _emailController.text,
+                                        password: _passwordController.text)
+                                : Get.snackbar(
+                                    "Error Signing Up!",
+                                    "Passwords do not match",
+                                  );
+
+                            await FirebaseAuth.instance.currentUser
+                                ?.updateDisplayName(_usernameController.text);
+
+                            await FirebaseFirestore.instance
+                                .collection("users")
+                                .doc(FirebaseAuth.instance.currentUser!.uid)
+                                .set(
+                              {
+                                'uid': FirebaseAuth.instance.currentUser!.uid,
+                                'name': _usernameController.text,
+                                'email': _emailController.text,
+                                'is_anonymous': 'false',
+                              },
+                            );
                           } on FirebaseAuthException catch (e) {
-                            Get.snackbar("Error Signing In!", e.toString());
+                            Get.snackbar("Error Signing Up!", e.toString());
                           }
                         },
                         child: Container(
@@ -195,7 +262,7 @@ class _SigninState extends State<SignIn> {
                               borderRadius: BorderRadius.circular(10)),
                           child: const Center(
                             child: Text(
-                              'Login',
+                              'Register',
                               style: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -205,30 +272,22 @@ class _SigninState extends State<SignIn> {
                           ),
                         ),
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
+                          Text(
                             'Don\'t have an account? ',
                             style: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 14,
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              Get.to(
-                                () => const SignUp(),
-                                transition: Transition.fadeIn,
-                              );
-                            },
-                            child: const Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: primaryColor,
-                              ),
+                          Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: primaryColor,
                             ),
                           ),
                         ],
