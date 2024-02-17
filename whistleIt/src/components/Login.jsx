@@ -117,7 +117,7 @@ export default function Login() {
         {/* <Navbar /> */}
 
         {isLogin ? (
-          <div className="flex flex-col justify-center items-center bg-dark-blue h-[100vh] w-[100%]">
+          <div className="flex flex-col justify-center items-center bg-dark-purple h-[100vh] w-[100%]">
             <div className="max-w-md p-4 border rounded-lg shadow-md bg-white">
               <div className="text-center">
                 <p className="text-2xl font-bold">
@@ -195,7 +195,7 @@ export default function Login() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col justify-center items-center bg-dark-blue w-[100%] h-[100vh] ">
+          <div className="flex flex-col justify-center items-center bg-dark-purple w-[100%] h-[100vh] ">
             <div className="max-w-md p-4 border rounded-lg shadow-md bg-white">
               <div className="text-center">
                 <p className="text-2xl font-bold">
