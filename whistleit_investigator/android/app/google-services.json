@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "666159939154",
+    "project_id": "devdynasty-bitnbuild",
+    "storage_bucket": "devdynasty-bitnbuild.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666159939154:android:842648245cb71d0a20a98b",
+        "android_client_info": {
+          "package_name": "com.devdynasty.whistleit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjEWYwrErjALRIZGdVcGIro3IU4Cw6pKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
