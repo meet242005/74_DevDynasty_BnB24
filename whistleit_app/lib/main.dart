@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:whistleit_app/constants/colors.dart';
 import 'package:whistleit_app/screens/addreport/addreport.dart';
+import 'package:whistleit_app/screens/history/history.dart';
+import 'package:whistleit_app/screens/home/home.dart';
 import 'package:whistleit_app/screens/initial/splashscreen.dart';
 
 import 'firebase_options.dart';
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      home: const Home(),
       debugShowCheckedModeBanner: false,
     );
   }
