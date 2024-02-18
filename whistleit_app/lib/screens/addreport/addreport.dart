@@ -89,7 +89,10 @@ class _AddReportState extends State<AddReport> {
   }
 
   // Future changeLocation() async {
-  //   await controller.changeLocation(GeoPoint(
+  //   await controller.change
+  //
+  //
+  // (GeoPoint(
   //       latitude: double.parse(latitude!),
   //       longitude: double.parse(longitude!)));
   // }
@@ -480,6 +483,19 @@ class _AddReportState extends State<AddReport> {
                   ),
                 ),
                 //
+                latitude == null
+                    ? const SizedBox()
+                    : Container(
+                        height: 250,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade300),
+                            image: DecorationImage(
+                                image: NetworkImage(
+                                    "https://maps.geoapify.com/v1/staticmap?style=osm-bright-grey&width=1200&height=2000&center=lonlat:${longitude},${latitude}&zoom=15&marker=lonlat:${longitude},${latitude};size:large&apiKey=f9351bb499d244a8b43036c84893a902"),
+                                opacity: 1,
+                                fit: BoxFit.cover)),
+                      ),
                 //
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
