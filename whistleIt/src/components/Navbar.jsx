@@ -113,7 +113,6 @@ const Navbar = () => {
               } `}
             >
               <Link to={Menu.link} className=" flex gap-x-2">
-                {/* Use Link component */}
                 <img src={`./src/assets/${Menu.src}.png`} />
                 <span
                   className={`${!open && "hidden"} origin-left duration-200`}
