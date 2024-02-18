@@ -8,8 +8,16 @@ import category from "/Cases/search.png";
 import placeholder from "/Cases/placeholder.png";
 import Details from "./Details";
 import { useNavigate } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Pending = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  }, []);
   const [cases, setCases] = useState([]);
   const [caseId, setCaseId] = useState("");
   const [showAssignPopup, setShowAssignPopup] = useState(false); // State variable to track whether the assign popup should be shown
@@ -63,12 +71,15 @@ const Pending = () => {
       <section className="flex relative w-[100%] gap-x-10 ">
         <Navbar />
         <div className="w-[100%] mt-12 flex flex-col">
-          <p className="w-[100%] text-4xl flex mb-[3rem]">Pending Cases</p>
-          <div className=" overflow-y-scroll h-[40rem]">
+          <p data-aos="fade-left" className="w-[100%] text-4xl flex mb-[3rem]">
+            Pending Cases
+          </p>
+          <div className=" overflow-y-scroll overflow-x-hidden h-[40rem]">
             {cases.map((caseItem) => (
               <div
+                data-aos="fade-left"
                 key={caseItem.case_id}
-                className="bg-white rounded-lg shadow-2xl ml-2 p-4 mb-4 mr-9 border-2 border-gray-200"
+                className="bg-white rounded-lg shadow-2xl ml-2 cursor-pointer p-4 mb-4 mr-9 border-2 border-gray-200"
                 onClick={() => handleCaseClick(caseItem.case_id)}
               >
                 <div className="mb-1">
@@ -158,9 +169,73 @@ const Pending = () => {
   );
 };
 
+const InvestigatorDropdown = ({ options }) => {
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const handleRoleSelect = (event) => {
+    setSelectedRole(event.target.value);
+  };
+
+  return (
+    <div className="relative">
+      <select
+        className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+        onChange={handleRoleSelect}
+      >
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fillRule="evenodd"
+            d="M9.292 12.293a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L10 10.586 6.707 7.293a1 1 0 00-1.414 1.414l4 4z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </div>
+      {/* {selectedRole && <p className="mt-2">You selected: {selectedRole}</p>} */}
+    </div>
+  );
+};
 const AssignPopup = ({ caseId, onSubmit, onClose }) => {
   const [assignTo, setAssignTo] = useState("");
+  const [selectedRole, setSelectedRole] = useState(null);
 
+  const roles = [
+    "Inspector",
+    "Detective",
+    "Deputy Officer",
+    "Constable",
+    "Chief Investigator",
+    "Forensic Investigator",
+    "Surveillance Investigator",
+    "Private Investigator",
+    "Computer Forensic Investigator",
+    "Criminal Investigator",
+    "Fraud Investigator",
+    "Homicide Investigator",
+    "Narcotics Investigator",
+    "Intelligence Analyst",
+    "Crime Scene Investigator",
+    "Internal Investigator",
+    "Legal Investigator",
+    "Financial Investigator",
+    "Certified Fraud Examiner",
+    "Certified Legal Investigator",
+  ];
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+    // You can perform additional actions here when a role is selected
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(assignTo);
@@ -175,13 +250,7 @@ const AssignPopup = ({ caseId, onSubmit, onClose }) => {
             <label htmlFor="assignTo" className="text-sm">
               Assign To:
             </label>
-            <input
-              type="text"
-              id="assignTo"
-              value={assignTo}
-              onChange={(e) => setAssignTo(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2"
-            />
+            <InvestigatorDropdown options={roles} />
           </div>
           <div className="flex justify-end space-x-2">
             <button

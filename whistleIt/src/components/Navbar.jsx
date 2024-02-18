@@ -91,7 +91,7 @@ const Navbar = () => {
         <div className="flex gap-x-4 items-center">
           <img
             src={logo}
-            className={`cursor-pointer duration-500 ${
+            className={`cursor-pointer w-10 duration-500 ${
               open && "rotate-[360deg]"
             }`}
           />

@@ -8,8 +8,17 @@ import category from "/Cases/search.png";
 import placeholder from "/Cases/placeholder.png";
 import Details from "./Details";
 import { useNavigate } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Assigned = () => {
+  useEffect(() => {
+    AOS.init({
+      // Initialize AOS
+      duration: 1000, // Animation duration
+      once: true,
+    });
+  }, []);
   const [cases, setCases] = useState([]);
   const [caseId, setcaseId] = useState("");
   const [selectedCaseId, setSelectedCaseId] = useState("");
@@ -62,12 +71,15 @@ const Assigned = () => {
       <section className="flex relative w-[100%] gap-x-10 ">
         <Navbar />
         <div className="w-[100%] mt-12 flex flex-col">
-          <p className="w-[100%] text-4xl flex mb-[3rem]">Assigned Cases</p>
-          <div className=" overflow-y-scroll h-[40rem]">
+          <p data-aos="fade-left" className="w-[100%] text-4xl flex mb-[3rem]">
+            Assigned Cases
+          </p>
+          <div className=" overflow-y-scroll overflow-x-hidden h-[40rem]">
             {cases.map((caseItem) => (
               <div
+                data-aos="fade-left"
                 key={caseItem.case_id}
-                className="bg-white rounded-lg shadow-2xl ml-2 p-4 mb-4 mr-9 border-2 border-gray-200"
+                className="bg-white rounded-lg shadow-2xl ml-2 cursor-pointer p-4 mb-4 mr-9 border-2 border-gray-200"
                 onClick={() => handleCaseClick(caseItem.case_id)}
               >
                 <div className="mb-1">

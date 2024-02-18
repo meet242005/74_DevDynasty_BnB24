@@ -22,6 +22,7 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   // const [isHovered, setIsHovered] = useState(false);
   // const [redirectToHome, setRedirectToHome] = useState(false);
   const [currentUser, getCurrentUser] = useState({});
@@ -78,7 +79,8 @@ export default function Login() {
       const user = userCredential.user;
       const db = firebase.firestore();
       await setDoc(doc(db, "users", user.uid), {
-        name: name, // Replace with the user's actual name
+        name: name,
+        role: role, // Replace with the user's actual name
         // Add other user details here
       });
     } catch (error) {
@@ -220,6 +222,24 @@ export default function Login() {
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
                 />
+                <div className="my-4">
+                  <label
+                    htmlFor="role_field"
+                    className="block text-sm font-semibold text-gray-600 mb-1"
+                  >
+                    Role
+                  </label>
+                  <select
+                    id="role_field"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
+                  >
+                    <option value="">Select Role</option>
+                    <option value="police">Police</option>
+                    {/* Add more roles as needed */}
+                  </select>
+                </div>
               </div>
               <div className="my-4">
                 <label

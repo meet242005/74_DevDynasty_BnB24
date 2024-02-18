@@ -1,17 +1,12 @@
-// import React from "react";
-// import { StaticMap } from "@geoapify/maps";
+import React from "react";
 
-// const GeoMapping = ({ latitude, longitude }) => {
-//   return (
-//     <StaticMap
-//       apiKey="365aca0d8dc34706bf936e775e3967f3"
-//       width={400}
-//       height={300}
-//       center={[longitude, latitude]}
-//       zoom={12}
-//       marker={[longitude, latitude]}
-//     />
-//   );
-// };
+const GeoMapping = ({ latitude, longitude }) => {
+  const mapUrl = `https://maps.geoapify.com/v1/staticmap?style=osm-bright-grey&width=600&height=300&center=lonlat:${longitude},${latitude}&zoom=15&marker=lonlat:${longitude},${latitude};size:large&apiKey=f9351bb499d244a8b43036c84893a902`;
+  return (
+    <div>
+      <img src={mapUrl} alt="Map" />
+    </div>
+  );
+};
 
-// export default GeoMapping;
+export default GeoMapping;

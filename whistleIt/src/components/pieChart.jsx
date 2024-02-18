@@ -42,7 +42,7 @@ const PieChart = ({ assigned, pending, completed, onGoing }) => {
   }, [pending, assigned, completed, onGoing]); // Re-render if props change
 
   return (
-    <div style={{ width: "500px", height: "400px" }}>
+    <div data-aos="fade-right" style={{ width: "500px", height: "400px" }}>
       <Pie {...config} />
     </div>
   );

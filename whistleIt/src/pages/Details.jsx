@@ -9,11 +9,24 @@ import category from "/Cases/search.png";
 import placeholder from "/Cases/placeholder.png";
 import person from "/Cases/person.png";
 import phone from "/Cases/phone.png";
+import file from "/Cases/file.png";
 // import GeoMapping from "../components/GeoMapping";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import GeoMapping from "../components/GeoMapping";
+import { Skeleton } from "antd";
 
 const Details = ({ caseId, onClose }) => {
   const [caseDetails, setCaseDetails] = useState(null);
+  const [evidences, setEvidences] = useState([]);
 
+  useEffect(() => {
+    AOS.init({
+      // Initialize AOS
+      duration: 1000, // Animation duration
+      once: true, // Whether animation should only happen once
+    });
+  }, []);
   useEffect(() => {
     const fetchCaseDetails = async () => {
       try {
@@ -35,13 +48,39 @@ const Details = ({ caseId, onClose }) => {
 
     fetchCaseDetails();
   }, [caseId]);
+  useEffect(() => {
+    const fetchEvidences = async () => {
+      try {
+        const evidencesCollection = collection(
+          db,
+          "cases",
+          caseId,
+          "evidences"
+        );
+        const querySnapshot = await getDocs(evidencesCollection);
+
+        const updatedEvidences = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setEvidences(updatedEvidences);
+      } catch (error) {
+        console.error("Error fetching evidences:", error);
+      }
+    };
+
+    fetchEvidences();
+  }, [caseId]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg shadow-2xl p-4">
+      <div
+        data-aos="fade-down"
+        className="bg-white rounded-lg shadow-2xl p-4 py-6 my-8 h-[90vh] w-[50rem]"
+      >
         <img
           src={X}
-          className="absolute w-[2rem] top-0 right-0 mr-6 mt-6 transition-all text-gray-600 hover:scale-125 hover:text-gray-900"
+          className="absolute cursor-pointer w-[2rem] top-0 right-6 mr-6 mt-6 transition-all text-gray-600 hover:scale-125 hover:text-gray-900"
           onClick={onClose}
         />
 
@@ -51,6 +90,7 @@ const Details = ({ caseId, onClose }) => {
         {caseDetails ? (
           <div
             key={caseDetails.case_id}
+            className=" overflow-y-scroll h-[100%]  "
             // className="bg-white rounded-lg shadow-2xl ml-2 p-4 mb-4 mr-9 border-2 border-gray-200"
           >
             <div className="mb-1">
@@ -99,9 +139,11 @@ const Details = ({ caseId, onClose }) => {
               </div>
             </div>
             <div>
-              <div className="flex mt-2 p-2 bg-slate-200 rounded-md border-[1px] border-gray-300">
-                <p className="mr-2 text-gray-500 font-semibold">Description:</p>
-                <span className="text-gray-500">
+              <div className="flex mt-2 p-2 bg-slate-200 rounded-md border-[1px] mx-6 border-gray-300">
+                <p className="mr-2 text-gray-500  font-semibold">
+                  Description:
+                </p>
+                <span className="text-gray-500 ">
                   {caseDetails.case_description}
                 </span>
               </div>
@@ -149,25 +191,41 @@ const Details = ({ caseId, onClose }) => {
                 </div>
               </div>
 
-              <div className="flex mt-6 items-center gap-x-1">
-                <img src={phone} className=" w-7 " alt="" />
-                <p className="ml-2   text-gray-500">
-                  Contact Details:
-                  <br />
-                  <span className="  text-gray-700">
-                    {" "}
-                    {caseDetails.contact_name},{caseDetails.contact_phone}
-                  </span>
-                </p>
+              <div className="flex flex-col mt-6 items-start gap-x-1">
+                <div>
+                  <GeoMapping
+                    latitude={caseDetails.location_x}
+                    longitude={caseDetails.location_y}
+                  />
+                </div>
+                <div className=" flex mt-4 items-center">
+                  <img src={phone} className=" w-8 h-8 items-center" alt="" />
+                  <p className="ml-2   text-gray-500">
+                    Contact Details:
+                    <br />
+                    <span className="  text-gray-700">
+                      {" "}
+                      {caseDetails.contact_name},{caseDetails.contact_phone}
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div>
-                {/* <GeoMapping
-                  latitude={caseDetails.location_y}
-                  longitude={caseDetails.location_x}
-                /> */}
-              </div>
-              <div className=" mt-6">
+
+              <div className=" mt-6 flex flex-col ">
                 <p>Uploaded Evidence(s)</p>
+                <ul className=" mt-6">
+                  {evidences.map((evidence) => (
+                    <li key={evidence.id}>
+                      <a
+                        className=" p-4 border-2 border-gray-200 rounded-2xl flex gap-4 w-fit"
+                        href={evidence.document_link}
+                      >
+                        {evidence.document_name}{" "}
+                        <img src={file} className=" w-7" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>

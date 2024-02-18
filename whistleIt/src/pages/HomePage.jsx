@@ -28,7 +28,25 @@ const HomePage = () => {
   const [completed, setcompleted] = useState(0);
   const [onGoing, setonGoing] = useState(0);
   const [revenue, setRevenue] = useState(0);
+  const [cases, setCases] = useState([]);
 
+  useEffect(() => {
+    const fetchCases = async () => {
+      try {
+        const casesCollection = collection(db, "cases");
+        const querySnapshot = await getDocs(casesCollection);
+        const caseData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCases(caseData);
+      } catch (error) {
+        console.error("Error fetching cases:", error);
+      }
+    };
+
+    fetchCases();
+  }, []);
   useEffect(() => {
     AOS.init({
       // Initialize AOS
@@ -117,9 +135,14 @@ const HomePage = () => {
       <section className=" flex w-[100%] gap-x-10">
         <Navbar />
         <div className=" w-[100%] flex flex-col justify-center items-center gap-y-10 ">
-          <p className=" w-[100%] text-4xl flex mb-[3rem]">DashBoard</p>
-          <div className=" flex w-[100%] flex-col justify-center items-center bg-slate-200 p-5 mr-9 rounded-xl">
-            <Space direction="horizontal" className=" gap-x-12">
+          <p
+            data-aos="fade-right"
+            className=" w-[100%] text-4xl flex mb-[1rem]"
+          >
+            DashBoard
+          </p>
+          <div className=" flex w-[100%] flex-col justify-center h-fit items-center bg-slate-200 p-5 mr-9 rounded-xl">
+            <Space direction="horizontal" className=" gap-x-12 mb-4">
               <DashboardCard
                 icon={
                   <HourglassOutlined
@@ -181,13 +204,50 @@ const HomePage = () => {
                 value={completed}
               />
             </Space>
-
-            <PieChart
-              assigned={assigned}
-              pending={pending}
-              completed={completed}
-              onGoing={onGoing}
-            />
+            <section className=" flex w-[100%] justify-center items-center">
+              <PieChart
+                assigned={assigned}
+                pending={pending}
+                completed={completed}
+                onGoing={onGoing}
+              />
+              <div
+                data-aos="fade-left"
+                className=" border-[1px] border-gray-400 rounded-2xl w-[50%] h-[27rem] flex flex-col p-4 overflow-y-scroll"
+              >
+                <p className=" text-[#626d7a] text-2xl border-b-[1px] pb-2 border-gray-400">
+                  Recently Reported
+                </p>
+                <ul>
+                  {cases.map((caseItem) => (
+                    <li key={caseItem.id}>
+                      <div className=" relative p-2 border-2 border-gray-300 rounded-2xl mt-2">
+                        <p className=" text-dark-purple font-semibold text-lg mt-5">
+                          Case Title:{" "}
+                          <span className=" ml-4 text-gray-600 font-normal text-base">
+                            {caseItem.case_title}
+                          </span>
+                        </p>
+                        <div className=" flex gap-x-2">
+                          <p className=" text-dark-purple font-semibold text-lg">
+                            Description:{" "}
+                          </p>
+                          <span className=" text-gray-600 font-normal text-base">
+                            {caseItem.case_description}
+                          </span>
+                        </div>
+                        <div className=" bg-dark-purple py-[0.6rem] px-4 absolute top-2 right-4 rounded-2xl">
+                          <span className=" text-white">
+                            {caseItem.current_status}
+                          </span>
+                        </div>
+                      </div>
+                      {/* Render other case details as needed */}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
           </div>
         </div>
       </section>
