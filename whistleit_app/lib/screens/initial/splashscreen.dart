@@ -5,9 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:whistleit_app/constants/colors.dart';
 import 'package:whistleit_app/screens/addreport/addreport.dart';
 import 'package:whistleit_app/screens/auth/signin.dart';
-import 'package:whistleit_app/screens/home/home.dart';
+import 'package:whistleit_app/screens/auth/signup.dart';
+
+import '../home/home.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -29,7 +32,7 @@ class _SplashscreenState extends State<SplashScreen> {
         );
       } else {
         Get.off(
-          () => const SignIn(),
+          () => const SignUp(),
           transition: Transition.fadeIn,
         );
       }
@@ -38,10 +41,22 @@ class _SplashscreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: const Center(
-        child: CircularProgressIndicator(),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              "BitNBuild’24 - Team DevDynasty",
+              style: TextStyle(fontSize: 14, color: secondaryColor),
+            ),
+          )
+        ],
       ),
     );
   }

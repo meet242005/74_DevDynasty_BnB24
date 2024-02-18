@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:whistleit_app/screens/auth/signin.dart';
 
 import '../../constants/colors.dart';
+import '../home/home.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -151,10 +154,10 @@ class _SignUpState extends State<SignUp> {
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
                               hintText: 'Password',
-                              hintStyle: TextStyle(
+                              hintStyle: const TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: secondaryColor),
-                              prefixIcon: Icon(
+                              prefixIcon: const Icon(
                                 Icons.password,
                                 color: secondaryColor,
                               ),
@@ -193,10 +196,10 @@ class _SignUpState extends State<SignUp> {
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
                               hintText: 'Confirm Password',
-                              hintStyle: TextStyle(
+                              hintStyle: const TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: secondaryColor),
-                              prefixIcon: Icon(
+                              prefixIcon: const Icon(
                                 Icons.password,
                                 color: secondaryColor,
                               ),
@@ -224,6 +227,8 @@ class _SignUpState extends State<SignUp> {
                       InkWell(
                         onTap: () async {
                           try {
+                            Get.dialog(const Center(
+                                child: CircularProgressIndicator()));
                             _passwordController.text ==
                                     _password2Controller.text
                                 ? await FirebaseAuth.instance
@@ -249,7 +254,10 @@ class _SignUpState extends State<SignUp> {
                                 'is_anonymous': 'false',
                               },
                             );
+                            Get.offAll(const Home(),
+                                transition: Transition.fadeIn);
                           } on FirebaseAuthException catch (e) {
+                            Get.back();
                             Get.snackbar("Error Signing Up!", e.toString());
                           }
                         },
@@ -272,22 +280,28 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ),
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Don\'t have an account? ',
+                          const Text(
+                            'Already have an account? ',
                             style: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 14,
                             ),
                           ),
-                          Text(
-                            'Sign Up',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: primaryColor,
+                          InkWell(
+                            onTap: () {
+                              Get.offAll(const SignIn(),
+                                  transition: Transition.fadeIn);
+                            },
+                            child: const Text(
+                              'Log In',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: primaryColor,
+                              ),
                             ),
                           ),
                         ],
@@ -335,6 +349,7 @@ class _SignUpState extends State<SignUp> {
             InkWell(
               onTap: () async {
                 try {
+                  Get.dialog(const Center(child: CircularProgressIndicator()));
                   await FirebaseAuth.instance.signInAnonymously();
                   await FirebaseFirestore.instance
                       .collection("users")
@@ -347,8 +362,11 @@ class _SignUpState extends State<SignUp> {
                       'is_anonymous': 'true',
                     },
                   );
+
+                  Get.offAll(const Home(), transition: Transition.fadeIn);
                 } on FirebaseAuthException catch (e) {
                   Get.snackbar("Error Signing In!", e.toString());
+                  Get.back();
                 }
               },
               child: Container(

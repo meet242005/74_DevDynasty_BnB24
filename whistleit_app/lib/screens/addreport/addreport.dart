@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:whistleit_app/constants/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:whistleit_app/screens/home/home.dart';
 import '../../package/mapsearch.dart';
 
 class AddReport extends StatefulWidget {
@@ -128,23 +129,29 @@ class _AddReportState extends State<AddReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           scrolledUnderElevation: 0.0,
           toolbarHeight: 100,
           title: Column(
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 47,
-                    height: 47,
-                    decoration: BoxDecoration(
-                        color: thirdColor,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.arrow_back_ios_new),
-                      ],
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Container(
+                      width: 47,
+                      height: 47,
+                      decoration: BoxDecoration(
+                          color: thirdColor,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.arrow_back_ios_new),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -664,6 +671,7 @@ class _AddReportState extends State<AddReport> {
         onTap: () async {
           try {
             if (formKey.currentState!.validate()) {
+              Get.dialog(Center(child: CircularProgressIndicator()));
               var upload =
                   await FirebaseFirestore.instance.collection("cases").add({
                 'case_title': _caseTitle.text,
@@ -677,10 +685,11 @@ class _AddReportState extends State<AddReport> {
                 'date_of_incident': _dateOfOccurence.text,
                 'category': _caseCategory,
                 'involved_party': _involvedParty.text,
-                'current_status': "REGISTERED",
+                'current_status': "pending",
                 'created_time': DateTime.now(),
                 'modified_time': DateTime.now(),
-                'assigned_to': ''
+                'assigned_to': '',
+                'uploaded_by': FirebaseAuth.instance.currentUser!.uid
               });
 
               await FirebaseFirestore.instance
@@ -704,6 +713,9 @@ class _AddReportState extends State<AddReport> {
               }
 
               await batch.commit();
+
+              Get.back();
+              Get.offAll(Home(), transition: Transition.downToUp);
 
               Get.snackbar(
                   "Report Successful", "Your report was added successfully");

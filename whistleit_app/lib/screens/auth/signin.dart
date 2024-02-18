@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:whistleit_app/screens/auth/signup.dart';
 
 import '../../constants/colors.dart';
+import '../home/home.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -152,12 +154,16 @@ class _SigninState extends State<SignIn> {
                           InkWell(
                             onTap: () async {
                               try {
+                                Get.dialog(const Center(
+                                    child: CircularProgressIndicator()));
                                 await FirebaseAuth.instance
                                     .sendPasswordResetEmail(
                                         email: _emailController.text);
+                                Get.back();
                                 Get.snackbar("Password Reset Sent!",
                                     "Please Check Your Email");
                               } on FirebaseAuthException catch (e) {
+                                Get.back();
                                 Get.snackbar("Error Sending Password Reset!",
                                     e.toString());
                               }
@@ -178,12 +184,17 @@ class _SigninState extends State<SignIn> {
                       InkWell(
                         onTap: () async {
                           try {
+                            Get.dialog(const Center(
+                                child: CircularProgressIndicator()));
                             await FirebaseAuth.instance
                                 .signInWithEmailAndPassword(
                                     email: _emailController.text,
                                     password: _passwordController.text);
+                            Get.back();
+                            Get.offAll(Home(), transition: Transition.fadeIn);
                           } on FirebaseAuthException catch (e) {
                             Get.snackbar("Error Signing In!", e.toString());
+                            Get.back();
                           }
                         },
                         child: Container(
@@ -276,6 +287,7 @@ class _SigninState extends State<SignIn> {
             InkWell(
               onTap: () async {
                 try {
+                  Get.dialog(const Center(child: CircularProgressIndicator()));
                   await FirebaseAuth.instance.signInAnonymously();
                   await FirebaseFirestore.instance
                       .collection("users")
@@ -288,6 +300,8 @@ class _SigninState extends State<SignIn> {
                       'is_anonymous': 'true',
                     },
                   );
+                  Get.back();
+                  Get.offAll(Home(), transition: Transition.fadeIn);
                 } on FirebaseAuthException catch (e) {
                   Get.snackbar("Error Signing In!", e.toString());
                 }
