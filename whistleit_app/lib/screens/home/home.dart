@@ -13,7 +13,54 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        toolbarHeight: 100,
+        title: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "WhistleIt",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: primaryColor,
+                        fontSize: 24,
+                      ),
+                    ),
+                    Text(
+                      " Hey, Meet Chavan",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  width: 47,
+                  height: 47,
+                  decoration: BoxDecoration(
+                    color: thirdColor,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.logout),
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              color: Colors.grey.shade300,
+            )
+          ],
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: Column(
