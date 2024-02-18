@@ -198,6 +198,7 @@ Widget Card(
       height: 160,
       width: double.infinity,
       decoration: BoxDecoration(
+          color: thirdColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey.shade200)),
       child: Column(
@@ -220,7 +221,7 @@ Widget Card(
                       ),
                     ),
                     Text(
-                      'Case Title: ${caseTitle}',
+                      '${caseTitle}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 18,

@@ -171,14 +171,18 @@ class _CasechatState extends State<CaseChat> {
                                       launchUrlString(documentSnapshot['url']);
                                     }
                                   },
-                                  child: Text(
-                                    documentSnapshot['message'],
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 16),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        documentSnapshot['message'],
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 16),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Text(
-                                  DateFormat('kk:mm').format(
+                                  DateFormat('dd-MM-yyy kk:mm').format(
                                     documentSnapshot['time'].toDate(),
                                   ),
                                   style: TextStyle(

@@ -497,6 +497,9 @@ class _AddReportState extends State<AddReport> {
                                 fit: BoxFit.cover)),
                       ),
                 //
+                SizedBox(
+                  height: 5,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -572,7 +575,7 @@ class _AddReportState extends State<AddReport> {
                 //
                 //
                 SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -705,14 +708,15 @@ class _AddReportState extends State<AddReport> {
                 'created_time': DateTime.now(),
                 'modified_time': DateTime.now(),
                 'assigned_to': '',
-                'uploaded_by': FirebaseAuth.instance.currentUser!.uid
+                'uploaded_by': FirebaseAuth.instance.currentUser!.uid,
+                'case_id': '',
               });
 
               await FirebaseFirestore.instance
                   .collection("cases")
-                  .doc(upload.id)
+                  .doc(await upload.id)
                   .update({
-                'case_id': upload.id,
+                'case_id': await upload.id,
               });
               var batch = FirebaseFirestore.instance.batch();
               for (var i = 0; i < file_data.length; i++) {

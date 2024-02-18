@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:whistleit_app/constants/colors.dart';
 import 'package:whistleit_app/package/urltype.dart';
 import 'package:whistleit_app/screens/casedetails/casechat.dart';
@@ -142,28 +145,34 @@ class _CaseDetailsState extends State<CaseDetails> {
                           ),
                         ),
                       ),
-                      // Column(
-                      //   children: [
-                      //     Text(
-                      //       'Modified on: ${widget.documentSnapshot['modified_time']}',
-                      //       overflow: TextOverflow.ellipsis,
-                      //       style: TextStyle(
-                      //         color: secondaryColor,
-                      //         fontWeight: FontWeight.w500,
-                      //         fontSize: 10,
-                      //       ),
-                      //     ),
-                      //     Text(
-                      //       'Created time: ${widget.documentSnapshot['modified_time']}',
-                      //       overflow: TextOverflow.ellipsis,
-                      //       style: TextStyle(
-                      //         color: secondaryColor,
-                      //         fontWeight: FontWeight.w500,
-                      //         fontSize: 10,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      Column(
+                        children: [
+                          Text(
+                            'Modified on: ' +
+                                DateFormat('dd-MM-yyy kk:mm').format(widget
+                                    .documentSnapshot['modified_time']
+                                    .toDate()),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                            ),
+                          ),
+                          Text(
+                            'Created on: ' +
+                                DateFormat('dd-MM-yyy kk:mm').format(widget
+                                    .documentSnapshot['created_time']
+                                    .toDate()),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ],
@@ -259,27 +268,29 @@ class _CaseDetailsState extends State<CaseDetails> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.assignment,
-                        color: secondaryColor,
-                        size: 16,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Assigned To:  ${widget.documentSnapshot['assigned_to']}',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: secondaryColor,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
+                  widget.documentSnapshot['assigned_to'] != ""
+                      ? Row(
+                          children: [
+                            Icon(
+                              Icons.assignment,
+                              color: secondaryColor,
+                              size: 16,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Assigned To:  ${widget.documentSnapshot['assigned_to']}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        )
+                      : SizedBox(),
                   SizedBox(
                     height: 30,
                   ),
@@ -297,19 +308,25 @@ class _CaseDetailsState extends State<CaseDetails> {
                               width: 10,
                             ),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Location:  ${widget.documentSnapshot['location_place']}',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: secondaryColor,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
+                              child: InkWell(
+                                onTap: () {
+                                  launchUrlString(
+                                      "https://www.google.com/maps/search/?api=1&query=${widget.documentSnapshot['location_x']},${widget.documentSnapshot['location_y']}");
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Location:  ${widget.documentSnapshot['location_place']}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -319,94 +336,119 @@ class _CaseDetailsState extends State<CaseDetails> {
                   ),
                 ],
               ),
-              // SizedBox(
-              //   height: 250,
-              //   child: FlutterMap(
-              //     options: MapOptions(
-              //       center: LatLng(
-              //           double.parse(widget.documentSnapshot['location_x']),
-              //           double.parse(widget.documentSnapshot['location_y'])),
-              //       zoom: 13.0,
-              //     ),
-              //     layers: [
-              //       CircleLayerOptions(
-              //         circles: [
-              //           CircleMarker(
-              //             point: LatLng(
-              //               double.parse(widget.documentSnapshot['location_x']),
-              //               double.parse(widget.documentSnapshot['location_y']),
-              //             ),
-              //             color: Colors.redAccent.withOpacity(1),
-              //             borderColor: Colors.redAccent,
-              //             borderStrokeWidth: 1,
-              //             useRadiusInMeter: true,
-              //             radius: 300,
-              //           ),
-              //         ],
-              //       ),
-              //       TileLayerOptions(
-              //         urlTemplate:
-              //             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              //         subdomains: ['a', 'b', 'c'],
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
-              Container(
+              SizedBox(
                 height: 250,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.shade300),
-                    image: DecorationImage(
-                        image: NetworkImage(
-                            "https://maps.geoapify.com/v1/staticmap?style=osm-bright-grey&width=1200&height=2000&center=lonlat:${widget.documentSnapshot['location_y']},${widget.documentSnapshot['location_x']}&zoom=15&marker=lonlat:${widget.documentSnapshot['location_y']},${widget.documentSnapshot['location_x']};size:large&apiKey=f9351bb499d244a8b43036c84893a902"),
-                        opacity: 1,
-                        fit: BoxFit.cover)),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Column(
-                    children: [Icon(Icons.phone)],
+                child: FlutterMap(
+                  options: MapOptions(
+                    center: LatLng(
+                        double.parse(widget.documentSnapshot['location_x']),
+                        double.parse(widget.documentSnapshot['location_y'])),
+                    zoom: 13.0,
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Contact Details:',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: secondaryColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              ' ${widget.documentSnapshot['contact_name']},  ${widget.documentSnapshot['contact_phone']}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: secondaryColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+                  layers: [
+                    CircleLayerOptions(
+                      circles: [
+                        CircleMarker(
+                          point: LatLng(
+                            double.parse(widget.documentSnapshot['location_x']),
+                            double.parse(widget.documentSnapshot['location_y']),
+                          ),
+                          color: Colors.redAccent.withOpacity(1),
+                          borderColor: Colors.redAccent,
+                          borderStrokeWidth: 1,
+                          useRadiusInMeter: true,
+                          radius: 300,
                         ),
                       ],
                     ),
-                  )
-                ],
+                    TileLayerOptions(
+                      urlTemplate:
+                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      subdomains: ['a', 'b', 'c'],
+                    ),
+                    MarkerLayerOptions(
+                      markers: [
+                        Marker(
+                          width: 40,
+                          height: 40,
+                          point: LatLng(
+                            double.parse(widget.documentSnapshot['location_x']),
+                            double.parse(widget.documentSnapshot['location_y']),
+                          ),
+                          builder: (ctx) => Container(
+                            child: Icon(
+                              Icons.location_on,
+                              color: primaryColor,
+                              size: 40,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
+              // Container(
+              //   height: 250,
+              //   decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(10),
+              //       border: Border.all(color: Colors.grey.shade300),
+              //       image: DecorationImage(
+              //           image: NetworkImage(
+              //               "https://maps.geoapify.com/v1/staticmap?style=osm-bright-grey&width=1200&height=2000&center=lonlat:${widget.documentSnapshot['location_y']},${widget.documentSnapshot['location_x']}&zoom=15&marker=lonlat:${widget.documentSnapshot['location_y']},${widget.documentSnapshot['location_x']};size:large&apiKey=f9351bb499d244a8b43036c84893a902"),
+              //           opacity: 1,
+              //           fit: BoxFit.cover)),
+              // ),
+
+              SizedBox(
+                height: 20,
+              ),
+              widget.documentSnapshot['is_anonymous'] == "false"
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          children: [Icon(Icons.phone)],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Contact Details:',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: secondaryColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    ' ${widget.documentSnapshot['contact_name']},  ${widget.documentSnapshot['contact_phone']}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: secondaryColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    )
+                  : SizedBox(),
+
               SizedBox(
                 height: 30,
               ),
@@ -445,8 +487,8 @@ class _CaseDetailsState extends State<CaseDetails> {
                                 documentSnapshot['document_link']);
                             return InkWell(
                                 onTap: () {
-                                  Get.to(CaseDetails(documentSnapshot),
-                                      transition: Transition.downToUp);
+                                  launchUrlString(
+                                      documentSnapshot['document_link']);
                                 },
                                 child: Container(
                                   margin: EdgeInsets.fromLTRB(0, 0, 10, 0),

@@ -176,6 +176,7 @@ class _HomeState extends State<Home> {
                             color: thirdColor,
                             border: Border.all(color: Colors.grey.shade200)),
                         padding: const EdgeInsets.all(10),
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -279,15 +280,21 @@ class _HomeState extends State<Home> {
                         itemBuilder: (context, index) {
                           DocumentSnapshot documentSnapshot =
                               snapshot.data!.docs[index];
-                          return Card(
-                            caseId: documentSnapshot['case_id'],
-                            caseTitle: documentSnapshot['case_title'],
-                            caseStatus: documentSnapshot['current_status'],
-                            caseDesc: documentSnapshot['case_description'],
-                            caseLocation: documentSnapshot['location_place'],
-                            caseCategory: documentSnapshot['category'],
-                            caseParty: documentSnapshot['involved_party'],
-                            caseDate: documentSnapshot['date_of_incident'],
+                          return InkWell(
+                            onTap: () {
+                              Get.to(CaseDetails(documentSnapshot),
+                                  transition: Transition.downToUp);
+                            },
+                            child: Card(
+                              caseId: documentSnapshot['case_id'],
+                              caseTitle: documentSnapshot['case_title'],
+                              caseStatus: documentSnapshot['current_status'],
+                              caseDesc: documentSnapshot['case_description'],
+                              caseLocation: documentSnapshot['location_place'],
+                              caseCategory: documentSnapshot['category'],
+                              caseParty: documentSnapshot['involved_party'],
+                              caseDate: documentSnapshot['date_of_incident'],
+                            ),
                           );
                         }),
                   );
@@ -319,7 +326,7 @@ class _HomeState extends State<Home> {
                 Get.to(const AddReport(), transition: Transition.fadeIn);
               },
               child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                margin: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                 width: double.infinity,
                 height: 60,
                 decoration: BoxDecoration(
@@ -397,6 +404,7 @@ class _HomeState extends State<Home> {
         height: 160,
         width: 100,
         decoration: BoxDecoration(
+            color: thirdColor,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade200)),
         child: Column(
@@ -419,7 +427,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Text(
-                        'Case Title: ${caseTitle}',
+                        '${caseTitle}',
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
@@ -486,9 +494,6 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
             Row(
               children: [
                 Expanded(
@@ -527,13 +532,20 @@ class _HomeState extends State<Home> {
                             color: secondaryColor,
                             size: 16,
                           ),
-                          Text(
-                            ' Category: ${caseCategory}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: secondaryColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ' Category: ${caseCategory}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: secondaryColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -551,13 +563,20 @@ class _HomeState extends State<Home> {
                           color: secondaryColor,
                           size: 16,
                         ),
-                        Text(
-                          ' Party Involved: ${caseParty}',
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ' Party Involved: ${caseParty}',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: secondaryColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -569,13 +588,20 @@ class _HomeState extends State<Home> {
                           color: secondaryColor,
                           size: 16,
                         ),
-                        Text(
-                          ' Reported On: ${caseDate}',
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ' Reported On: ${caseDate}',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: secondaryColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
