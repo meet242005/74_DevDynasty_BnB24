@@ -1,24 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Pie } from "@ant-design/plots";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
-const PieChart = () => {
-  // Sample data for the pie chart
-  const data = [
-    { type: "Assigned Cases", value: 1 },
-    { type: "Completed Cases", value: 2 },
-    { type: "OnGoing Cases", value: 3 },
-    { type: "Pending Cases", value: 4 },
-  ];
-
-  // Configuration options for the pie chart
-  const config = {
+const PieChart = ({ assigned, pending, completed, onGoing }) => {
+  const [config, setConfig] = useState({
     appendPadding: 10,
-    data,
+    data: [], // Initialize data as an empty array
     angleField: "value",
     colorField: "type",
     radius: 1,
     innerRadius: 0.6,
-
     label: {
       type: "inner",
       offset: "-50%",
@@ -30,7 +22,24 @@ const PieChart = () => {
       },
     },
     interactions: [{ type: "element-active" }],
-  };
+  });
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  }, []);
+  useEffect(() => {
+    // Ensure values are numbers
+    const numericalData = [
+      { type: "Pending Cases", value: Number(pending) },
+      { type: "Assigned Cases", value: Number(assigned) },
+      { type: "OnGoing Cases", value: Number(onGoing) },
+      { type: "Completed Cases", value: Number(completed) },
+    ];
+
+    setConfig({ ...config, data: numericalData });
+  }, [pending, assigned, completed, onGoing]); // Re-render if props change
 
   return (
     <div style={{ width: "500px", height: "400px" }}>

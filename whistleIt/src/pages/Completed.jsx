@@ -6,10 +6,12 @@ import calendar from "/Cases/calendar.png";
 import people from "/Cases/people.png";
 import category from "/Cases/search.png";
 import placeholder from "/Cases/placeholder.png";
+import Details from "./Details";
+import { useNavigate } from "react-router-dom";
 
 const Completed = () => {
   const [cases, setCases] = useState([]);
-
+  const [caseId, setcaseId] = useState("");
   useEffect(() => {
     const fetchCases = async () => {
       const casesCollection = collection(db, "cases");
@@ -19,31 +21,39 @@ const Completed = () => {
         ...doc.data(),
       }));
       setCases(
-        casesData.filter((caseItem) => caseItem.case_status === "completed")
+        casesData.filter((caseItem) => caseItem.current_status === "completed")
       );
     };
 
     fetchCases();
   }, []);
   console.log(cases);
-
+  // const navigate = useNavigate();
+  const handleCaseClick = (caseId) => {
+    setcaseId(caseId);
+    console.log(caseId);
+  };
+  const handleClosePopup = () => {
+    setcaseId(null);
+  };
   return (
     <>
-      <section className="flex w-[100%] gap-x-10 ">
+      <section className="flex relative w-[100%] gap-x-10 ">
         <Navbar />
         <div className="w-[100%] mt-12 flex flex-col">
           <p className="w-[100%] text-4xl flex mb-[3rem]">Completed Cases</p>
           <div className=" overflow-y-scroll h-[40rem]">
             {cases.map((caseItem) => (
               <div
-                key={caseItem.caseId}
+                key={caseItem.case_id}
                 className="bg-white rounded-lg shadow-2xl ml-2 p-4 mb-4 mr-9 border-2 border-gray-200"
+                onClick={() => handleCaseClick(caseItem.case_id)}
               >
                 <div className="mb-1">
                   <p className=" mr-2 text-sm text-gray-400">
                     Case ID: #
                     <span className=" text-sm  text-gray-400">
-                      {caseItem.caseId}
+                      {caseItem.case_id}
                     </span>
                   </p>
                 </div>
@@ -59,33 +69,33 @@ const Completed = () => {
                 <div>
                   <div className="flex mt-2">
                     <p className="mr-2 text-gray-500">Description:</p>
-                    <span className="text-gray-700">{caseItem.case_desc}</span>
+                    <span className="text-gray-700">
+                      {caseItem.case_description}
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4 text-gray-500">
                     <div className="flex mt-2 items-center gap-x-1">
                       <img src={placeholder} className=" w-7 " alt="" />
                       <p className="mr-2 text-gray-500">Location:</p>
                       <span className="text-gray-700">
-                        {caseItem.case_location}
+                        {caseItem.location_place}
                       </span>
                     </div>
                     <div className="flex mt-2 items-center gap-x-1">
                       <img src={category} className=" w-7 " alt="" />
                       <p className="mr-2 text-gray-500">Category:</p>
-                      <span className="text-gray-700">
-                        {caseItem.case_category}
-                      </span>
+                      <span className="text-gray-700">{caseItem.category}</span>
                     </div>
                     <div className="flex mt-2 items-center gap-x-1">
                       <img src={calendar} className=" w-7 " alt="" />
                       <p className="mr-2 text-gray-500">Reported On:</p>
                       <span className="text-gray-700">
                         <span className="text-gray-700">
-                          {caseItem.case_reported &&
-                          caseItem.case_reported.toDate &&
-                          typeof caseItem.case_reported.toDate === "function"
+                          {caseItem.created_time &&
+                          caseItem.created_time.toDate &&
+                          typeof caseItem.created_time.toDate === "function"
                             ? new Date(
-                                caseItem.case_reported.toDate()
+                                caseItem.created_time.toDate()
                               ).toLocaleString("en-GB")
                             : "No reported date"}
                         </span>
@@ -95,7 +105,7 @@ const Completed = () => {
                       <img src={people} className=" w-7 " alt="" />
                       <p className="mr-2 text-gray-500">Party Involved:</p>
                       <span className="text-gray-700">
-                        {caseItem.case_partyInvolved}
+                        {caseItem.involved_party}
                       </span>
                     </div>
                   </div>
@@ -104,6 +114,7 @@ const Completed = () => {
             ))}
           </div>
         </div>
+        {caseId && <Details caseId={caseId} onClose={handleClosePopup} />}
       </section>
     </>
   );

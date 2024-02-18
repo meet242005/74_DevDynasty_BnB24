@@ -9,6 +9,7 @@ import OnGoing from "./pages/OnGoing";
 import Pending from "./pages/Pending";
 import Completed from "./pages/Completed";
 import AddCases from "./pages/AddCases";
+import Details from "./pages/Details";
 
 const MainRouter = () => {
   return (
@@ -18,6 +19,7 @@ const MainRouter = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/details/:caseId" element={<Details />} /> */}
           <Route path="/add" element={<AddCases />} />
           <Route path="/totalCases" element={<TotalCases />} />
           <Route path="/assigned" element={<Assigned />} />
