@@ -1,5 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:whistleit_app/constants/colors.dart';
+import 'package:whistleit_app/screens/casedetails/casedetails.dart';
+
+import '../addreport/addreport.dart';
+import '../home/home.dart';
+import '../initial/splashscreen.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -15,86 +23,156 @@ class _HistoryState extends State<History> {
       appBar: AppBar(
         scrolledUnderElevation: 0.0,
         toolbarHeight: 100,
-        title: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "WhistleIt",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: primaryColor,
-                        fontSize: 24,
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "WhistleIt",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: primaryColor,
+                          fontSize: 24,
+                        ),
                       ),
-                    ),
-                    Text(
-                      " Hey, Meet Chavan",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        fontSize: 16,
+                      Text(
+                        FirebaseAuth.instance.currentUser!.displayName != null
+                            ? "Hey, ${FirebaseAuth.instance.currentUser!.displayName} "
+                            : "Hey, User",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontSize: 16),
                       ),
+                    ],
+                  ),
+                  Container(
+                    width: 47,
+                    height: 47,
+                    decoration: BoxDecoration(
+                        color: thirdColor,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                            onTap: () async {
+                              await FirebaseAuth.instance.signOut();
+                              Get.offAll(const SplashScreen(),
+                                  transition: Transition.circularReveal);
+                            },
+                            child: const Icon(Icons.logout_outlined)),
+                      ],
                     ),
-                  ],
-                ),
-                Container(
-                  width: 47,
-                  height: 47,
-                  decoration: BoxDecoration(
-                    color: thirdColor,
-                    borderRadius: BorderRadius.circular(15),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.logout),
-                  ),
-                ),
-              ],
-            ),
-            Divider(
-              color: Colors.grey.shade300,
-            )
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 700,
-              child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Card();
-                  }),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(items: [
-        BottomNavigationBarItem(
-          icon: Icon(
-            Icons.home,
-            color: Colors.grey[400],
+                ],
+              ),
+              Divider(
+                color: Colors.grey.shade300,
+              )
+            ],
           ),
-          label: 'Home',
         ),
-        BottomNavigationBarItem(
+      ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'My History',
+              style:
+                  TextStyle(color: secondaryColor, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("cases")
+                    .where('uploaded_by',
+                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox(
+                      height: 160,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot documentSnapshot =
+                              snapshot.data!.docs[index];
+                          return InkWell(
+                            onTap: () {
+                              Get.to(CaseDetails(documentSnapshot),
+                                  transition: Transition.downToUp);
+                            },
+                            child: Card(
+                              caseId: documentSnapshot['case_id'],
+                              caseTitle: documentSnapshot['case_title'],
+                              caseStatus: documentSnapshot['current_status'],
+                              caseDesc: documentSnapshot['case_description'],
+                              caseLocation: documentSnapshot['location_place'],
+                              caseCategory: documentSnapshot['category'],
+                              caseParty: documentSnapshot['involved_party'],
+                              caseDate: documentSnapshot['date_of_incident'],
+                            ),
+                          );
+                        });
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1,
+        items: [
+          BottomNavigationBarItem(
             icon: Icon(
-              Icons.receipt,
+              Icons.home,
               color: Colors.grey[400],
             ),
-            label: 'My reports')
-      ]),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(
+                Icons.receipt,
+                color: primaryColor,
+              ),
+              label: 'My reports')
+        ],
+        onTap: (value) {
+          if (value == 0) {
+            Get.offAll(() => const Home(), transition: Transition.fadeIn);
+          }
+          if (value == 1) {
+            Get.offAll(() => const History(), transition: Transition.fadeIn);
+          }
+        },
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Container(
         height: 55,
         child: FloatingActionButton(
-          onPressed: () {},
-          child: Icon(
+          onPressed: () {
+            Get.to(const AddReport(), transition: Transition.fadeIn);
+          },
+          child: const Icon(
             Icons.add,
             color: Colors.white,
           ),
@@ -105,37 +183,46 @@ class _HistoryState extends State<History> {
   }
 }
 
-Widget Card() {
+Widget Card(
+    {caseId,
+    caseTitle,
+    caseStatus,
+    caseDesc,
+    caseLocation,
+    caseCategory,
+    caseParty,
+    caseDate}) {
   return Container(
-      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-      margin: EdgeInsets.all(10),
-      height: 142,
+      padding: const EdgeInsets.all(10),
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+      height: 160,
       width: double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300)),
+          border: Border.all(color: Colors.grey.shade200)),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                flex: 4,
+                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Case ID: #abcdef1234',
-                      style: TextStyle(
+                      'Case ID: ${caseId}',
+                      style: const TextStyle(
                         color: secondaryColor,
                         fontWeight: FontWeight.w500,
                         fontSize: 10,
                       ),
                     ),
                     Text(
-                      'Case Title: Bribery Report',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
+                      'Case Title: ${caseTitle}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
                         fontSize: 18,
                         color: primaryColor,
                       ),
@@ -148,15 +235,15 @@ Widget Card() {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                        padding: EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: primaryColor,
                         ),
                         child: Center(
                           child: Text(
-                            'IN REVIEW',
-                            style: TextStyle(
+                            caseStatus.toString().toUpperCase(),
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 10),
@@ -167,7 +254,7 @@ Widget Card() {
               )
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 1,
           ),
           Container(
@@ -175,22 +262,24 @@ Widget Card() {
             width: double.infinity,
             color: Colors.grey.shade300,
           ),
-          SizedBox(
+          const SizedBox(
             height: 2,
           ),
           Row(
             children: [
               Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'description about the case in about 3 three lines with text overflow Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor dhfbs Lorem ipsum dolor sit amet, consectetur adipiscing elit, sanjkds...',
+                      caseDesc,
                       maxLines: 3,
+                      textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: secondaryColor,
                         fontWeight: FontWeight.w500,
-                        fontSize: 8,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -198,46 +287,54 @@ Widget Card() {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: [
               Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.location_on,
                           color: secondaryColor,
                           size: 12,
                         ),
-                        Text(
-                          'Location: Vile Parle, Mumbai',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 8,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ' ${caseLocation}',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: secondaryColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.category,
                           color: secondaryColor,
-                          size: 12,
+                          size: 16,
                         ),
                         Text(
-                          'Category: Bribery',
+                          ' Category: ${caseCategory}',
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: secondaryColor,
                             fontWeight: FontWeight.w500,
-                            fontSize: 8,
+                            fontSize: 10,
                           ),
                         ),
                       ],
@@ -250,36 +347,36 @@ Widget Card() {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.people,
                         color: secondaryColor,
-                        size: 12,
+                        size: 16,
                       ),
                       Text(
-                        'Party Involved: XYZ',
+                        ' Party Involved: ${caseParty}',
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: secondaryColor,
                           fontWeight: FontWeight.w500,
-                          fontSize: 8,
+                          fontSize: 10,
                         ),
                       ),
                     ],
                   ),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.date_range,
                         color: secondaryColor,
-                        size: 12,
+                        size: 16,
                       ),
                       Text(
-                        'Reported On: 17/02/2024',
+                        ' Reported On: ${caseDate}',
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: secondaryColor,
                           fontWeight: FontWeight.w500,
-                          fontSize: 8,
+                          fontSize: 10,
                         ),
                       ),
                     ],

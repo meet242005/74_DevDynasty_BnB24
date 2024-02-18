@@ -1,10 +1,11 @@
-import 'dart:ffi';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:whistleit_app/constants/colors.dart';
 
 class CaseDetails extends StatefulWidget {
-  const CaseDetails({Key? key});
+  DocumentSnapshot documentSnapshot;
+  CaseDetails(DocumentSnapshot this.documentSnapshot, {Key? key});
 
   @override
   State<CaseDetails> createState() => _CaseDetailsState();
@@ -15,21 +16,27 @@ class _CaseDetailsState extends State<CaseDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0.0,
         toolbarHeight: 100,
         title: Column(
           children: [
             Row(
               children: [
-                Container(
-                  width: 47,
-                  height: 47,
-                  decoration: BoxDecoration(
-                    color: thirdColor,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.arrow_back_ios_new),
+                InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Container(
+                    width: 47,
+                    height: 47,
+                    decoration: BoxDecoration(
+                      color: thirdColor,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.arrow_back_ios_new),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -65,7 +72,7 @@ class _CaseDetailsState extends State<CaseDetails> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +81,7 @@ class _CaseDetailsState extends State<CaseDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Case ID: #abcdef1234',
+                  'Case ID: ${widget.documentSnapshot['case_id']}',
                   style: TextStyle(
                     color: secondaryColor,
                     fontWeight: FontWeight.w500,
@@ -82,7 +89,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                   ),
                 ),
                 Text(
-                  'Case Title: Bribery Report',
+                  'Case Title: ${widget.documentSnapshot['case_title']}',
                   style: TextStyle(
                     color: primaryColor,
                     fontWeight: FontWeight.w500,
@@ -98,9 +105,11 @@ class _CaseDetailsState extends State<CaseDetails> {
                         borderRadius: BorderRadius.circular(5),
                         color: primaryColor,
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'IN REVIEW',
+                          widget.documentSnapshot['current_status']
+                              .toString()
+                              .toUpperCase(),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -109,28 +118,28 @@ class _CaseDetailsState extends State<CaseDetails> {
                         ),
                       ),
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          'Modified on: 18/02/2024',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                          ),
-                        ),
-                        Text(
-                          'Created time: 18/02/2024',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Column(
+                    //   children: [
+                    //     Text(
+                    //       'Modified on: ${widget.documentSnapshot['modified_time']}',
+                    //       overflow: TextOverflow.ellipsis,
+                    //       style: TextStyle(
+                    //         color: secondaryColor,
+                    //         fontWeight: FontWeight.w500,
+                    //         fontSize: 10,
+                    //       ),
+                    //     ),
+                    //     Text(
+                    //       'Created time: ${widget.documentSnapshot['modified_time']}',
+                    //       overflow: TextOverflow.ellipsis,
+                    //       style: TextStyle(
+                    //         color: secondaryColor,
+                    //         fontWeight: FontWeight.w500,
+                    //         fontSize: 10,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ],
@@ -141,10 +150,10 @@ class _CaseDetailsState extends State<CaseDetails> {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: secondaryColor),
               ),
               child: Text(
-                'description about the case in about 3 three lines with text overflow Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor dhfbs Lorem ipsum dolor sit amet, consectetur adipiscing elit, sanjkds...',
+                widget.documentSnapshot['case_description'].toString(),
                 maxLines: 5,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -157,116 +166,133 @@ class _CaseDetailsState extends State<CaseDetails> {
             Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.category,
-                          color: secondaryColor,
-                          size: 12,
-                        ),
-                        Text(
-                          'Category: Bribery',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                    Icon(
+                      Icons.category,
+                      color: secondaryColor,
+                      size: 14,
                     ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.people,
-                          color: secondaryColor,
-                          size: 12,
-                        ),
-                        Text(
-                          'Party Involved: XYZ',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Category: ${widget.documentSnapshot['category']}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 10,
-                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.date_range,
-                          color: secondaryColor,
-                          size: 12,
-                        ),
-                        Text(
-                          'Incident Date: 8/02/24',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                    Icon(
+                      Icons.people,
+                      color: secondaryColor,
+                      size: 16,
                     ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.assignment,
-                          color: secondaryColor,
-                          size: 12,
-                        ),
-                        Text(
-                          'Assigned To: Devang Harsora',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Party Involved:  ${widget.documentSnapshot['involved_party']}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 20,
+                Row(
+                  children: [
+                    Icon(
+                      Icons.date_range,
+                      color: secondaryColor,
+                      size: 16,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Incident Date:  ${widget.documentSnapshot['date_of_incident']}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          color: secondaryColor,
-                          size: 12,
-                        ),
-                        Text(
-                          'Location: Vile Parle, Mumbai',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                    Icon(
+                      Icons.assignment,
+                      color: secondaryColor,
+                      size: 16,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Assigned To:  ${widget.documentSnapshot['assigned_to']}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
                             color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
+                            size: 16,
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Location:  ${widget.documentSnapshot['location_place']}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: secondaryColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ],
+            ),
+            Container(
+              height: 250,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(
+                          "https://maps.geoapify.com/v1/staticmap?style=osm-bright-grey&width=1200&height=2000&center=lonlat:${widget.documentSnapshot['location_y']},${widget.documentSnapshot['location_x']}&zoom=10&marker=lonlat:${widget.documentSnapshot['location_y']},${widget.documentSnapshot['location_x']};size:large&apiKey=f9351bb499d244a8b43036c84893a902"),
+                      opacity: 0.1,
+                      fit: BoxFit.cover)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -288,7 +314,7 @@ class _CaseDetailsState extends State<CaseDetails> {
                             style: TextStyle(
                               color: secondaryColor,
                               fontWeight: FontWeight.w500,
-                              fontSize: 10,
+                              fontSize: 14,
                             ),
                           ),
                         ],
@@ -296,12 +322,12 @@ class _CaseDetailsState extends State<CaseDetails> {
                       Row(
                         children: [
                           Text(
-                            'Meet Chavan, +91 8169264512',
+                            ' ${widget.documentSnapshot['contact_name']},  ${widget.documentSnapshot['contact_phone']}',
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: secondaryColor,
                               fontWeight: FontWeight.w500,
-                              fontSize: 12,
+                              fontSize: 14,
                             ),
                           ),
                         ],

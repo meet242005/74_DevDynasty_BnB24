@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
