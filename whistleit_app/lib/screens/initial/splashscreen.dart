@@ -7,6 +7,7 @@ import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:whistleit_app/screens/addreport/addreport.dart';
 import 'package:whistleit_app/screens/auth/signin.dart';
+import 'package:whistleit_app/screens/casedetails/casedetails.dart';
 import 'package:whistleit_app/screens/home/home.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _SplashscreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       if (FirebaseAuth.instance.currentUser != null) {
         Get.off(
-          () => Home(),
+          () => CaseDetails(),
           transition: Transition.fadeIn,
         );
       } else {
